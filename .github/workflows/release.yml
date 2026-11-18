@@ -1,8 +1,11 @@
 name: Release
-# Pushing a tag like v1.2.0 publishes a GitHub release, which Home Assistant's Marketplace uses to offer the update.
+# When the version in manifest.json changes on main, publish a GitHub release for it.
+# Home Assistant's Marketplace sees the new release and offers the update.
 on:
   push:
-    tags: ["v*"]
+    branches: [main]
+    paths: ["custom_components/chorequest/manifest.json", ".github/workflows/release.yml", "RELEASE_NOTES.md"]
+  workflow_dispatch:
 permissions:
   contents: write
 jobs:
@@ -10,13 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check the tag matches manifest.json
-        run: |
-          v=$(python3 -c "import json;print(json.load(open('custom_components/chorequest/manifest.json'))['version'])")
-          [ "v$v" = "${GITHUB_REF_NAME}" ] || { echo "Tag ${GITHUB_REF_NAME} does not match manifest version $v"; exit 1; }
-      - name: Publish release
+      - name: Publish release if this version is new
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          notes=$(git tag -l --format='%(contents)' "${GITHUB_REF_NAME}")
-          gh release create "${GITHUB_REF_NAME}" --title "${GITHUB_REF_NAME}" --notes "${notes:-ChoreQuest for Home Assistant ${GITHUB_REF_NAME}}"
+          v="v$(python3 -c "import json;print(json.load(open('custom_components/chorequest/manifest.json'))['version'])")"
+          if gh release view "$v" >/dev/null 2>&1; then echo "$v already released"; exit 0; fi
+          gh release create "$v" --target "$GITHUB_SHA" --title "$v" --notes-file RELEASE_NOTES.md
