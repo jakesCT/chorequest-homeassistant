@@ -1,0 +1,22 @@
+name: Release
+# Pushing a tag like v1.2.0 publishes a GitHub release, which Home Assistant's Marketplace uses to offer the update.
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the tag matches manifest.json
+        run: |
+          v=$(python3 -c "import json;print(json.load(open('custom_components/chorequest/manifest.json'))['version'])")
+          [ "v$v" = "${GITHUB_REF_NAME}" ] || { echo "Tag ${GITHUB_REF_NAME} does not match manifest version $v"; exit 1; }
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes=$(git tag -l --format='%(contents)' "${GITHUB_REF_NAME}")
+          gh release create "${GITHUB_REF_NAME}" --title "${GITHUB_REF_NAME}" --notes "${notes:-ChoreQuest for Home Assistant ${GITHUB_REF_NAME}}"
