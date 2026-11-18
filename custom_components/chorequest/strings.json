@@ -1,0 +1,26 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect ChoreQuest",
+        "description": "Make a key on the ChoreQuest site under Family → Home Assistant, then paste it here.",
+        "data": { "url": "Site address", "key": "Key" }
+      },
+      "reauth_confirm": {
+        "title": "New ChoreQuest key",
+        "description": "The old key stopped working. Make a new one under Family → Home Assistant and paste it here.",
+        "data": { "key": "Key" }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach the ChoreQuest site. Check the address.",
+      "invalid_auth": "That key was not accepted. Make a new one under Family → Home Assistant.",
+      "wrong_family": "That key belongs to a different family.",
+      "unknown": "Something went wrong. Try again."
+    },
+    "abort": {
+      "already_configured": "This family is already connected.",
+      "reauth_successful": "Reconnected."
+    }
+  }
+}

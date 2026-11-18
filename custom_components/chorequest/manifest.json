@@ -1,0 +1,14 @@
+{
+  "domain": "chorequest",
+  "name": "ChoreQuest",
+  "codeowners": [
+    "@jakesCT"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/jakesCT/chorequest-homeassistant",
+  "integration_type": "service",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/jakesCT/chorequest-homeassistant/issues",
+  "requirements": [],
+  "version": "1.1.0"
+}
